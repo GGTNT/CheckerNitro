@@ -3,19 +3,48 @@ import requests
 import os
 import random
 import time
+import psutil
+from discord_webhook import DiscordWebhook
+os.system("title Nitro Generator https://github.com/GGTNT")
 LICENCE = colorama.Fore.BLUE + """
 Copyright (c) 2022 https://github.com/GGTNT
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”),
-to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
-VERSION =  "1.0"
-print(LICENCE + colorama.Fore.YELLOW + "Version : " + VERSION)
-time.sleep(5)
+VERSION =  "1.3"
+def slowType(text: str, speed: float, newLine=True):
+    for i in text:  
+        
+        print(i, end="", flush=True)
+        time.sleep(speed)  
+    if newLine:  
+        print()  
+slowType(LICENCE + colorama.Fore.YELLOW + "Version : " + VERSION,0.01)
+slowType(colorama.Fore.WHITE+"Voulez vous utilisez un webhook (Y/N) : ",0.01,newLine=False)
+url_web_y = input()
+if url_web_y == "Y" or url_web_y == "y":
+    slowType("Entrer l'url du webhook : ",0.01,newLine=False)
+    url_web = input()
+    webhook = DiscordWebhook(url=url_web, rate_limit_retry=True,
+                         content='Le générateur vient de démarer, vous recevrez un message ici quand un code nitro **VALIDE** sera trouver.')
+    try:
+        response = webhook.execute()
+    except requests.exceptions.MissingSchema:
+        print(colorama.Fore.RED+"Url invalide"+colorama.Fore.RESET)
+        print("Le programme va se fermer...")
+        time.sleep(3)
+        exit()
+else:
+    pass
+slowType(colorama.Fore.WHITE+"Veuillez chosir les cpu (default=0.01) : ",0.01,newLine=False)
+try:
+    cpu = float(input())
+except ValueError:
+    pass
+    cpu = 0.01
+code_tester = 0
 while True:
+    psutil.cpu_percent(interval=cpu)
+    code_tester = code_tester + 1
+    os.system(f"title Nitro Generator https://github.com/GGTNT                                       code tester : {code_tester}, cpu : {cpu}")
     nitro = ""
     dico = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     for i in range(16):
@@ -24,6 +53,9 @@ while True:
     if r.ok:
         os.system("cls")
         print(colorama.Fore.GREEN + f"[v] https://discord.com/gifts/{nitro}")
+        webhook = DiscordWebhook(url=url_web, rate_limit_retry=True,
+                     content=f'Nitro trouver : {nitro}')
+        response = webhook.execute()
         with open("code.txt","a+") as f:
             f.write(f"https://discord.com/gifts/{nitro}")
             f.close()
